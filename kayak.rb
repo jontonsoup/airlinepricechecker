@@ -6,6 +6,12 @@ require 'pry'
 
 def hipmunk(location_from, location_to, target_leave_date, target_return_date)
   browser = Watir::Browser.new
+
+  browser.goto("http://www.whatsmyip.org/")
+  ip = browser.span(:id, "ip").text
+  puts ip
+
+
   browser.goto 'http://www.hipmunk.com/'
   enter_flight_data(browser, location_from, location_to, target_leave_date, target_return_date)
   scape_data(browser)
@@ -37,5 +43,25 @@ end
 
 
 
+def tor_hipmunk(location_from, location_to, target_leave_date, target_return_date)
+
+  profile = Selenium::WebDriver::Firefox::Profile.new
+  profile['network.proxy.socks'] = 'localhost'
+  profile['network.proxy.socks_port'] = 9150
+  profile['network.proxy.type'] = 1
+  browser = Watir::Browser.new :firefox, :profile => profile
+
+  browser.goto("http://www.whatsmyip.org/")
+  ip = browser.span(:id, "ip").text
+  puts ip
+
+  browser.goto 'http://www.hipmunk.com/'
+  enter_flight_data(browser, location_from, location_to, target_leave_date, target_return_date)
+  scape_data(browser)
+  puts "_________________________________________________"
+end
+
+tor_hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Nov 19", "Nov 26")
 
 hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Nov 19", "Nov 26")
+
