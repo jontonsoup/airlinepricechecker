@@ -61,7 +61,14 @@ def tor_hipmunk(location_from, location_to, target_leave_date, target_return_dat
   puts "_________________________________________________"
 end
 
+
+
+#
+# Call scrapers
+#
+puts "Tor"
 tor_hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Nov 19", "Nov 26")
 
+puts "Firefox"
 hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Nov 19", "Nov 26")
 
