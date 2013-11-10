@@ -1,11 +1,11 @@
 require 'rubygems'
 require 'watir-webdriver'
-require 'pry'
 
 
 
 def hipmunk(location_from, location_to, target_leave_date, target_return_date)
   browser = Watir::Browser.new
+  browser.cookies.clear
 
   browser.goto("http://www.whatsmyip.org/")
   ip = browser.span(:id, "ip").text
@@ -50,6 +50,7 @@ def tor_hipmunk(location_from, location_to, target_leave_date, target_return_dat
   profile['network.proxy.socks_port'] = 9150
   profile['network.proxy.type'] = 1
   browser = Watir::Browser.new :firefox, :profile => profile
+  browser.cookies.clear
 
   browser.goto("http://www.whatsmyip.org/")
   ip = browser.span(:id, "ip").text
@@ -66,9 +67,9 @@ end
 #
 # Call scrapers
 #
-puts "Tor"
-tor_hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Nov 19", "Nov 26")
+# puts "Tor"
+# tor_hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Nov 19", "Nov 26")
 
 puts "Firefox"
-hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Nov 19", "Nov 26")
+hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Dec 19", "Dec 26")
 
