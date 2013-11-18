@@ -17,6 +17,7 @@ def hipmunk(location_from, location_to, target_leave_date, target_return_date)
   browser.goto 'http://www.hipmunk.com/'
   enter_flight_data(browser, location_from, location_to, target_leave_date, target_return_date)
   scape_data(browser)
+  browser.close
 end
 
 def enter_flight_data(browser, location_from, location_to, target_leave_date, target_return_date)
