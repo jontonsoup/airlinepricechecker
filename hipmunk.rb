@@ -7,6 +7,8 @@ def hipmunk(location_from, location_to, target_leave_date, target_return_date)
   browser = Watir::Browser.new
   browser.cookies.clear
 
+  browser.window.resize_to(600, 1500)
+  
   browser.goto("http://www.whatsmyip.org/")
   ip = browser.span(:id, "ip").text
   puts ip
@@ -24,7 +26,7 @@ def enter_flight_data(browser, location_from, location_to, target_leave_date, ta
 
   browser.text_field(:id => 'fac1flight').set location_from
   browser.text_field(:id=> 'fac2flight').set location_to
-  browser.button(:text => 'Search', :index => 1).click
+  browser.button(:text => 'Search', :index => 2).click
 end
 
 def scape_data(browser)
