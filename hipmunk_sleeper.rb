@@ -8,8 +8,8 @@ def hipmunk(location_from, location_to, target_leave_date, target_return_date)
 
   browser.window.resize_to(600, 1500)
   
-  browser.goto("http://ifconfig.me/")
-  ip = browser.strong(:id, "ip_address").text
+  browser.goto("http://www.whatsmyip.org/")
+  ip = browser.span(:id, "ip").text
   puts ip
 
 
@@ -66,13 +66,19 @@ def tor_hipmunk(location_from, location_to, target_leave_date, target_return_dat
   browser.close
 end
 
-#
-# Call scrapers
-#
 
-puts "Firefox"
-hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Dec 19", "Dec 26")
+while true
+    #
+    # Call scrapers
+    #
+    begin
+      puts "Firefox"
+      hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Dec 19", "Dec 26")
+      puts "Tor"
+      tor_hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Dec 19", "Dec 26")
 
-puts "Tor"
-tor_hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Dec 19", "Dec 26")
-
+    rescue 
+      puts "Error"
+    end
+      sleep(4.hours)
+end
