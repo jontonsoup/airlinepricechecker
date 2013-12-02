@@ -32,7 +32,7 @@ end
 
 def scape_data(browser)
   browser.element(:class => "full-name", :index => 1).when_present.hover
-  (1..100).step(2) do |x|
+  (2..101).step(2) do |x|
     begin
       price = browser.element(:class => "price", :index => x).text
       browser.element(:class => "full-name", :index => x).hover
