@@ -1,8 +1,15 @@
 module Organize where
 
-import Text.Parsec hiding ((<|>), many)
 import Control.Applicative
 import Data.Function
+
+import Text.JSON
+import Text.JSON.Pretty (pp_value)
+import Text.Parsec hiding ((<|>), many)
+
+parseOutput = runParser scraperRunsP () ""
+
+getPoints = (>>= runsToData)
 
 type Parser = Parsec String ()
 data Browser = Firefox | Tor deriving (Show, Read, Eq, Ord)
@@ -22,6 +29,38 @@ data Run = Run { browser :: Browser
                , runs :: [Item]
                } deriving (Show, Read, Eq)
 
+data DataPoint = DataPoint { dp_browser :: Browser
+                           , dp_ip :: String
+                           , run :: Item
+                           } deriving (Show, Read, Eq)
+
+instance JSON DataPoint where
+  showJSON dp = JSObject . toJSObject $ [("browser", b)
+                                        , ("ip", ip)
+                                        , ("date", dt)
+                                        , ("time", t)
+                                        , ("airline", a)
+                                        , ("airlineCode", ac)
+                                        , ("flightNum", fn)
+                                        , ("price", p)]
+    where b = showJSON . show $ dp_browser dp
+          ip = showJSON $ dp_ip dp
+          r = run dp
+          dt = showJSON $ date r
+          t = showJSON $ time r
+          f = flight r
+          a = showJSON $ airlineName f
+          ac = showJSON $ airLineCode f
+          fn = showJSON $ num f
+          p = showJSON $ price r
+          
+          
+
+runsToData :: Run -> [DataPoint]
+runsToData r = DataPoint b i <$> (runs r)
+  where b = browser r
+        i = ip r
+        
 scraperRunsP :: Parser [Run]
 scraperRunsP = (scraperRunP `sepEndBy` (many (char '_') <* newline)) <* eof
 
