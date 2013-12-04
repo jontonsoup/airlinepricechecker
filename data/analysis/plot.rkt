@@ -59,16 +59,26 @@
 
 (define plots
   (for/list ([(flight offers) (in-hash flight-map)])
+    (displayln flight)
     (define off-list (set->list offers))
-    (define (to-prices offs)
-      (map (λ (ht) (hash-ref ht 'price))
+    (define (map-key offs key)
+      (map (λ (ht) (hash-ref ht key))
            offs))
+    (define (to-prices offs)
+      (map-key offs 'price))
+    (define (to-times offs)
+      (map-key offs 'time))
     (cond [(no-change? (to-prices off-list))
-           (vector 'no-change flight (hash-ref (first off-list) 'price))]
+           (vector 'no-price-change flight (hash-ref (first off-list) 'price))]
+          [(no-change? (to-times off-list))
+           (vector 'no-time-change flight )]
           [else
            (define-values (tors ffs) (partition-browser off-list))
            (cond [(or (no-change? (to-prices tors)))
                   (or (no-change? (to-prices ffs)))
-                  'different-no-change]
+                  (vector 'different-no-change flight)]
+                 [(or (no-change? (to-times tors))
+                      (no-change? (to-times ffs)))
+                  (vector 'different-no-time-change flight)]
                  [else
                   (plot-flight-prices flight flight-map)])])))
