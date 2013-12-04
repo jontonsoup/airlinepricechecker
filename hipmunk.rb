@@ -10,13 +10,13 @@ def hipmunk(location_from, location_to, target_leave_date, target_return_date)
   
   browser.goto("http://ifconfig.me/")
   ip = browser.strong(:id, "ip_address").text
-  puts ip
+  #puts ip
 
 
   browser.goto 'http://www.hipmunk.com/'
   enter_flight_data(browser, location_from, location_to, target_leave_date, target_return_date)
-  scape_data(browser)
-  puts "_________________________________________________"
+  scape_data(browser, 'Firefox', ip)
+  #puts "_________________________________________________"
   browser.close
 end
 
@@ -30,14 +30,14 @@ def enter_flight_data(browser, location_from, location_to, target_leave_date, ta
   browser.button(:text => 'Search', :index => 2).click
 end
 
-def scape_data(browser)
+def scape_data(browser, type, ip)
   browser.element(:class => "full-name", :index => 1).when_present.hover
   (2..101).step(2) do |x|
     begin
       price = browser.element(:class => "price", :index => x).text
       browser.element(:class => "full-name", :index => x).hover
       flight = browser.element(:class => "flightnum").text
-      puts Time.now.to_s + " | #{flight} | #{price}"
+      puts type + " | " + ip + " | " + Time.now.to_s + " | #{flight} | #{price}"
       browser.driver.execute_script("window.scrollBy(0,130)")
     rescue Exception => e
     end
@@ -57,12 +57,12 @@ def tor_hipmunk(location_from, location_to, target_leave_date, target_return_dat
   browser.window.resize_to(600, 1500)
   browser.goto("http://www.whatsmyip.org/")
   ip = browser.span(:id, "ip").text
-  puts ip
+  #puts ip
 
   browser.goto 'http://www.hipmunk.com/'
   enter_flight_data(browser, location_from, location_to, target_leave_date, target_return_date)
-  scape_data(browser)
-  puts "_________________________________________________"
+  scape_data(browser, 'Tor', ip)
+  #puts "_________________________________________________"
   browser.close
 end
 
@@ -70,9 +70,7 @@ end
 # Call scrapers
 #
 
-puts "Firefox"
 hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Dec 19", "Dec 26")
 
-puts "Tor"
 tor_hipmunk("CHI - Chicago, IL (Area)", "NYC - New York City, NY (Area)", "Dec 19", "Dec 26")
 
