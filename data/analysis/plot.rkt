@@ -3,8 +3,12 @@
 (require json
          plot)
 
+(define (json-from-file f)
+  (read-json (open-input-file f)))
+
 (define offers
-  (read-json (open-input-file "edited-flight_output.json")))
+  (append (json-from-file "edited-flight_output.json")
+          (json-from-file "flight_output2.json")))
 
 (struct flight (airline num)
   #:transparent)
@@ -22,18 +26,23 @@
                  update
                  (set offer))))
 
-(define (timestr->number str)
+(define (timestr->number dstr tstr)
+  #;#;
+  (define y (string->number (substring dstr 1 4)))
+  (define mo (string->number (substring dstr 4 6)))
+  (define d (string->number (substring dstr 6 8)))
   (match-define (list h m s) 
-                (regexp-split #rx":" str))
-  (+ (* 60 60 (string->number h))
+                (regexp-split #rx":" tstr))
+  (+ (* 24 60 60 d)
+     (* 60 60 (string->number h))
      (* 60 (string->number m))
      (string->number s)))
 
 (define (to-points offs)
   (define (to-point off)
-    (vector (timestr->number (hash-ref off 'time))
+    (vector (timestr->number (hash-ref off 'date) (hash-ref off 'time))
             (hash-ref off 'price)))
-  (map to-point offs))
+  (sort (map to-point offs) < #:key (λ (v) (vector-ref v 0))))
 
 (define (partition-browser offers)
   (partition (λ (v) 
@@ -44,8 +53,9 @@
 (define (plot-flight-prices flight flight-map)
   (define offers (set->list (hash-ref flight-map flight)))
   (define-values (tors ffs) (partition-browser offers))
-  (list (plot (points (to-points tors)))
-        (plot (points (to-points ffs)))))
+  (plot (list (points (to-points tors) #:color "red"  #:label "tor")
+              (points (to-points ffs)  #:color "blue" #:label "firefox"))
+        #:legend-anchor 'left))
 
 (define flights (hash-keys flight-map))
 #;(plot-flight-prices (flight "UA" "3905") flight-map)
@@ -82,3 +92,4 @@
                   (vector 'different-no-time-change flight)]
                  [else
                   (plot-flight-prices flight flight-map)])])))
+plots

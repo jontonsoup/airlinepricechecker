@@ -65,6 +65,15 @@ runsToData :: Run -> [DataPoint]
 runsToData r = DataPoint b i <$> (runs r)
   where b = browser r
         i = ip r
+
+scraperRunsPv2 :: Parser [Run]
+scraperRunsPv2 = (scraperRunPv2 `sepEndBy` newline) <* eof
+
+scraperRunPv2 :: Parser Run
+scraperRunPv2 = Run <$> browserP <* divider
+                    <*> ipP <* divider
+                    <*> ((:[]) <$> itemP)
+  where divider = string " | "
         
 scraperRunsP :: Parser [Run]
 scraperRunsP = (scraperRunP `sepEndBy` (many (char '_') <* newline)) <* eof
@@ -73,10 +82,12 @@ scraperRunP :: Parser Run
 scraperRunP = Run <$> browserP <* newline
                   <*> ipP <* newline
                   <*> many1 (itemP <* newline)
-  where itemP = Item <$> dateP <* space
+    
+itemP :: Parser Item
+itemP = Item <$> dateP <* space
                      <*> timeP <* (space >> middle >> space)
                      <*> flightP <* string " | "
-                     <*> priceP
+                     <*> priceP    
 
 browserP :: Parser Browser
 browserP = read <$> (string "Firefox" <|> string "Tor")
