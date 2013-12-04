@@ -7,9 +7,14 @@ import Text.JSON
 import Text.JSON.Pretty (pp_value)
 import Text.Parsec hiding ((<|>), many)
 
+parseOutput :: String -> Either ParseError [Run]
 parseOutput = runParser scraperRunsP () ""
 
+getPoints :: [Run] -> [DataPoint]
 getPoints = (>>= runsToData)
+
+serializeRuns :: [Run] -> String
+serializeRuns = show . pp_value . showJSON . getPoints 
 
 type Parser = Parsec String ()
 data Browser = Firefox | Tor deriving (Show, Read, Eq, Ord)
