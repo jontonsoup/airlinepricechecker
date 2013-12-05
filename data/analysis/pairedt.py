@@ -13,10 +13,10 @@ def pairedt(pairs):
     #pairs = getCostPairs(json_file)
     fpairs = pairs['firefox']
     tpairs = pairs['tor']
-    #metadata  holds various stats for both arrays
-    metadata = dict(firefox = dict(), tor = dict())
-    fstats = metadata['firefox']
-    tstats = metadata['tor']
+    #results  holds various stats for both arrays
+    results = dict(firefox = dict(), tor = dict())
+    fstats = results['firefox']
+    tstats = results['tor']
 
     #Normality check
     nt = stats.normaltest(fpairs)
@@ -27,9 +27,10 @@ def pairedt(pairs):
     fstats['mean'] = np.mean(fpairs)
     tstats['mean'] = np.mean(tpairs)
     #ttest
-    results = stats.ttest_rel(fpairs, tpairs)
-    metadata['ttest_p'] = results[1]
-    return metadata
+    tt = stats.ttest_rel(fpairs, tpairs)
+    results['ttest_p'] = tt[1]
+    results['ttest_t'] = tt[0]
+    return results
     
 
 def getCostPairs(json_file):
@@ -71,9 +72,32 @@ def withinMinutes(minutes, tstr1, tstr2, tformat):
         return False
     else:
         return True
-    
+
+def dispStats(results):
+    thresholds = [.1, .05, .01]
+    print "Normality p-value:"
+    print "\tFirefox- ", results['firefox']['normal_p']
+    print "\tTor normality p-value- ", results['tor']['normal_p']
+    print "-------------------------------------------------"
+    print "Paired t-test"
+    print "\tt-test p-value: ", results['ttest_p']
+    print "\tt-test t-value: ", results['ttest_t']
+    for threshold in thresholds:
+        if results['ttest_p'] > threshold:
+            pn = 'FAIL'
+        else:
+            pn = 'PASS'
+        print '\tThreshold: ', threshold, '- ', pn
+    print "-------------------------------------------------"
+    print "Mean cost:"
+    print "\tFirefox- ", results['firefox']['mean']
+    print "\tTor normality p-value- ", results['tor']['mean']
+
 
 if __name__ == '__main__':
-    pairedt('cut-flight_output.json') 
+    pairs = getCostPairs('cut-flight_output.json') 
+    results = pairedt(pairs)
+    dispStats(results)
+    
     
      
