@@ -88,30 +88,29 @@ def dispStats(results):
     thresholds = [.1, .05, .01]
     print "RESULTS:"
     print "-------------------------------------------------"
+    print "Number of pairs: ", results['num_pairs']
+    print "Number of samples: ", results['numSamples']
+    print "Sample size: ", results['sampleSize']
+    print "Average difference: ", results['avg_diff']
+    print "-------------------------------------------------"
     print "Normality test"
-    print "\tFirefox p-value:", results['firefox']['normal_p']
-    print "\tTor p-value:", results['tor']['normal_p']
+    print "\tp-value:", results['normal_p']
     for threshold in thresholds:
-        if results['firefox']['normal_p'] > threshold and results['tor']['normal_p'] > threshold:
+        if float(results['normal_p']) > threshold:
             pn = 'NORMAL'
         else:
             pn = 'NOT NORMAL'
         print '\tThreshold: ', threshold, '- ', pn
     print "-------------------------------------------------"
-    print "Paired t-test"
+    print "Sample t-test"
     print "\tt-test p-value: ", results['ttest_p']
     print "\tt-test t-value: ", results['ttest_t']
     for threshold in thresholds:
-        if results['ttest_p'] > threshold:
+        if float(results['ttest_p']) > threshold:
             pn = 'FAIL'
         else:
             pn = 'PASS'
         print '\tThreshold: ', threshold, '- ', pn
-    print "-------------------------------------------------"
-    print "Number of pairs: ", results['num_pairs']
-    print "Mean cost:"
-    print "\tFirefox-", "$"+ format(round(results['firefox']['mean'],2))
-    print "\tTor-", "$"+ format(round(results['tor']['mean'],2))
 
 
 if __name__ == '__main__':

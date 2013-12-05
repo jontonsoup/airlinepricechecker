@@ -1,18 +1,20 @@
 RESULTS:
 -------------------------------------------------
-Normality p-value:
-    Firefox-  5.39808899709e-254
-    Tor-  2.444101687e-200
+Number of pairs:  1139
+Number of samples:  30
+Sample size:  37
+Average difference:  -0.1299
 -------------------------------------------------
-Paired t-test
-    t-test p-value:  0.289122027875
-    t-test t-value:  -1.0602200878
+Normality test
+    p-value: 0.4463
+    Threshold:  0.1 -  NORMAL
+    Threshold:  0.05 -  NORMAL
+    Threshold:  0.01 -  NORMAL
+-------------------------------------------------
+Sample t-test
+    t-test p-value:  0.1053
+    t-test t-value:  -1.6717
     Threshold:  0.1 -  FAIL
     Threshold:  0.05 -  FAIL
     Threshold:  0.01 -  FAIL
--------------------------------------------------
-Number of pairs:  3303
-Mean cost:
-    Firefox- $319.40
-    Tor- $319.78
 
