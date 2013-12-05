@@ -42,7 +42,13 @@
   (define (to-point off)
     (vector (timestr->number (hash-ref off 'date) (hash-ref off 'time))
             (hash-ref off 'price)))
-  (sort (map to-point offs) < #:key (λ (v) (vector-ref v 0))))
+  (define points 
+    (sort (map to-point offs) < #:key (λ (v) (vector-ref v 0))))
+  
+  (define min (vector-ref (first points) 0))
+  (map (λ (v) (vector (/ (- (vector-ref v 0) min) (* 60 60))
+                      (vector-ref v 1)))
+       points))
 
 (define (partition-browser offers)
   (partition (λ (v) 
@@ -52,15 +58,26 @@
 
 (define (plot-flight-prices flight flight-map)
   (define offers (set->list (hash-ref flight-map flight)))
+  (define prices (map (λ (v) (hash-ref v 'price)) offers))
+  (define min-price (apply min prices))
+  (define max-price (apply max prices))
+  (define extra (/ (- max-price min-price) 10))
+  
   (define-values (tors ffs) (partition-browser offers))
-  (plot (list (points (to-points tors) #:color "red"  #:label "tor")
-              (points (to-points ffs)  #:color "blue" #:label "firefox"))
-        #:y-label "Price ($)"
-        #:x-label "Elapsed Time (seconds)"
-        #:legend-anchor 'left))
+  (define title (string-append "Flight " (flight-airline flight) " " (flight-num flight)))
+  (plot-file
+   (list (points (to-points tors) #:color "red"  #:label "tor")
+         (points (to-points ffs)  #:color "blue" #:label "firefox"))
+   (string-append "plots/" title ".png")
+   'png
+   #:title title
+   #:y-label "Price ($)"
+   #:x-label "Elapsed Time (hours)"
+   #:y-min (- min-price extra)
+   #:y-max (+ max-price extra)
+   #:legend-anchor 'left))
 
 (define flights (hash-keys flight-map))
-#;(plot-flight-prices (flight "UA" "3905") flight-map)
 
 (define (sort-on-fst l)
   (sort l < #:key (λ (v) (vector-ref v 0))))
