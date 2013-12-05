@@ -1,6 +1,9 @@
 import json
+import cPickle as pickle
 import sys
 import random
+import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import scipy.stats as stats
 from math import fabs
@@ -12,6 +15,7 @@ def pairedt(pairs, numSamples):
     results = dict()
     t,v = pairs.items()
     diffs = [t[1][x] - v[1][x] for x in range(len(t[1]))]
+    plotDiffs(diffs)
     sampleSize = int(len(diffs)/numSamples)
     indices = range(len(diffs))
     random.shuffle(indices)
@@ -61,8 +65,8 @@ def getCostPairs(json_file):
                     tt['paired'] = 1
                     tPairs = pairs['tor']            
                     fPairs = pairs['firefox']
-                    tPairs.append(tt)
-                    fPairs.append(ff)
+                    tPairs.append(tt['price'])
+                    fPairs.append(ff['price'])
                     pairCount += 1
     return pairs
 
@@ -106,16 +110,49 @@ def dispStats(results):
     print "\tt-test p-value: ", results['ttest_p']
     print "\tt-test t-value: ", results['ttest_t']
     for threshold in thresholds:
-        if float(results['ttest_p']) > threshold:
+        if float(results['ttest_p']) > float(threshold):
             pn = 'FAIL'
         else:
             pn = 'PASS'
         print '\tThreshold: ', threshold, '- ', pn
 
+def plotPairs(pairs):
+    count = 100
+    firefox = pairs['firefox'][:count]
+    tor = pairs['tor'][:count]
+    numPairs = len(firefox)
+    xs = range(1,numPairs+1)
+    xs = range(1,count+1)
+    plt.scatter(xs,firefox, c='b', marker='o', label = 'Without Tor')
+    plt.scatter(xs,tor, c='r', marker='D', label = 'With Tor')
+    plt.xlim(0,count)
+    plt.ylim(310,350)
+    plt.ylabel('Cost')
+    plt.xlabel('Pair')
+    plt.title('Paired Costs from Browsing  With and Without Tor')
+    plt.legend('bottom right')
+    plt.savefig('plots/pairs')
+
+def plotDiffs(diffs):
+    n = len(diffs)
+    xs = range(1,n+1)
+    plt.scatter(xs,diffs, c='r', marker='o')
+    plt.xlim(0,n+1)
+    plt.ylim(-30,30)
+    plt.ylabel('Difference in Cost')
+    plt.xlabel('Pair')
+    plt.title('Obsered Cost Difference in Pairs (Tor-No Tor)')
+    plt.savefig('plots/diffs')
+    
 
 if __name__ == '__main__':
-    pairs = getCostPairs('cut-flight_output.json') 
-    results = pairedt(pairs)
+    try:
+        pairs = pickle.load(open("pairs.pkl", "r"))
+    except:
+        pairs = getCostPairs('cut-flight_output.json') 
+        pickle.dump(pairs, open("pairs.pkl", "w"))
+    results = pairedt(pairs,30)
+    plotPairs(pairs)
     #dispStats(results)
     
     
