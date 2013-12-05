@@ -81,7 +81,7 @@ def dispStats(results):
     print "Number of pairs: ", results['num_pairs']
     print "Normality p-value:"
     print "\tFirefox- ", results['firefox']['normal_p']
-    print "\tTor normality p-value- ", results['tor']['normal_p']
+    print "\tTor- ", results['tor']['normal_p']
     print "-------------------------------------------------"
     print "Paired t-test"
     print "\tt-test p-value: ", results['ttest_p']
@@ -94,12 +94,12 @@ def dispStats(results):
         print '\tThreshold: ', threshold, '- ', pn
     print "-------------------------------------------------"
     print "Mean cost:"
-    print "\tFirefox- ", results['firefox']['mean']
-    print "\tTor-", results['tor']['mean']
+    print "\tFirefox-", "$"+ format(round(results['firefox']['mean'],2))
+    print "\tTor-", "$"+ format(round(results['tor']['mean'],2))
 
 
 if __name__ == '__main__':
-    pairs = getCostPairs('edited-flight_output.json') 
+    pairs = getCostPairs('flight_output.json') 
     results = pairedt(pairs)
     dispStats(results)
     

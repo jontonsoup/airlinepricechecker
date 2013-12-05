@@ -1,9 +1,8 @@
 RESULTS:
 -------------------------------------------------
-Number of pairs:  3303
 Normality p-value:
     Firefox-  5.39808899709e-254
-    Tor normality p-value-  2.444101687e-200
+    Tor-  2.444101687e-200
 -------------------------------------------------
 Paired t-test
     t-test p-value:  0.289122027875
@@ -12,7 +11,8 @@ Paired t-test
     Threshold:  0.05 -  FAIL
     Threshold:  0.01 -  FAIL
 -------------------------------------------------
+Number of pairs:  3303
 Mean cost:
-    Firefox-  319.398122919
-    Tor-  319.784741144
+    Firefox- $319.40
+    Tor- $319.78
 
