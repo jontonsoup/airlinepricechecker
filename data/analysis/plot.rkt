@@ -55,6 +55,8 @@
   (define-values (tors ffs) (partition-browser offers))
   (plot (list (points (to-points tors) #:color "red"  #:label "tor")
               (points (to-points ffs)  #:color "blue" #:label "firefox"))
+        #:y-label "Price ($)"
+        #:x-label "Elapsed Time (seconds)"
         #:legend-anchor 'left))
 
 (define flights (hash-keys flight-map))
