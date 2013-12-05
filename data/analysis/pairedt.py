@@ -95,7 +95,7 @@ def dispStats(results):
     print "-------------------------------------------------"
     print "Mean cost:"
     print "\tFirefox- ", results['firefox']['mean']
-    print "\tTor normality p-value- ", results['tor']['mean']
+    print "\tTor-", results['tor']['mean']
 
 
 if __name__ == '__main__':
