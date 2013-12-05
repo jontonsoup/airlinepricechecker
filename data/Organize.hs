@@ -7,6 +7,20 @@ import Text.JSON
 import Text.JSON.Pretty (pp_value)
 import Text.Parsec hiding ((<|>), many)
 
+organize :: Parser [Run] -> FilePath -> FilePath -> IO ()
+organize runsP inF oF = 
+  do src <- readFile inF
+     case runParser runsP () inF src of
+       Left err -> print err
+       Right rs -> 
+         writeFile oF . serializeRuns $ rs
+
+organizeV2 :: FilePath -> FilePath -> IO ()
+organizeV2 = organize scraperRunsPv2
+
+organizeV1 :: FilePath -> FilePath -> IO ()
+organizeV1 = organize scraperRunsP
+
 parseOutput :: String -> Either ParseError [Run]
 parseOutput = runParser scraperRunsP () ""
 
