@@ -6,14 +6,14 @@ Sample size:  37
 Average difference:  -0.1299
 -------------------------------------------------
 Normality test
-    p-value: 0.2939
+    p-value: 0.3115
     Threshold:  0.1 -  NORMAL
     Threshold:  0.05 -  NORMAL
     Threshold:  0.01 -  NORMAL
 -------------------------------------------------
 Sample t-test
-    t-test p-value:  0.0709
-    t-test t-value:  -1.875
+    t-test p-value:  0.1517
+    t-test t-value:  -1.4724
     Threshold:  0.1 -  FAIL
     Threshold:  0.05 -  FAIL
     Threshold:  0.01 -  FAIL
