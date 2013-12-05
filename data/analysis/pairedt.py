@@ -15,6 +15,7 @@ def pairedt(pairs):
     tpairs = pairs['tor']
     #results  holds various stats for both arrays
     results = dict(firefox = dict(), tor = dict())
+    results['num_pairs'] = len(pairs['tor'])
     fstats = results['firefox']
     tstats = results['tor']
 
@@ -75,6 +76,9 @@ def withinMinutes(minutes, tstr1, tstr2, tformat):
 
 def dispStats(results):
     thresholds = [.1, .05, .01]
+    print "RESULTS:"
+    print "-------------------------------------------------"
+    print "Number of pairs: ", results['num_pairs']
     print "Normality p-value:"
     print "\tFirefox- ", results['firefox']['normal_p']
     print "\tTor normality p-value- ", results['tor']['normal_p']
@@ -95,7 +99,7 @@ def dispStats(results):
 
 
 if __name__ == '__main__':
-    pairs = getCostPairs('cut-flight_output.json') 
+    pairs = getCostPairs('edited-flight_output.json') 
     results = pairedt(pairs)
     dispStats(results)
     
