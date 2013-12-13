@@ -88,7 +88,7 @@
 
 (define (no-change? l)
   (>= 1 (set-count (list->set l))))
-#;#;
+
 (define plots
   (for/list ([(flight offers) (in-hash flight-map)])
     (displayln flight)
@@ -168,9 +168,9 @@ plots
            (hash-update ht interval add1 1))])
     (for/list ([(i d) (in-hash id-map)])
     (vector i d))))
-(plot (discrete-histogram interval-densities) 
-      ;;"flight-ip-histogram.png"
-      ;;'png
+(plot-file (discrete-histogram interval-densities) 
+      "flight-ip-histogram.png"
+      'png
       #:x-label "Number of Tor Ip Addresses"
       #:y-label "Number of Flights seen by that Many Tor Ip Addresses"
       #:title "Number of Different IPs Seeing Flight")
