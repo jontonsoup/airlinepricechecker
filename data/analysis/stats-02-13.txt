@@ -1,0 +1,19 @@
+RESULTS:
+-------------------------------------------------
+Number of pairs:  10265
+Number of samples:  30
+Sample size:  342
+Average difference:  0.4694
+-------------------------------------------------
+Normality test
+	p-value: 0.4057
+	Threshold:  0.1 -  NORMAL
+	Threshold:  0.05 -  NORMAL
+	Threshold:  0.01 -  NORMAL
+-------------------------------------------------
+Sample t-test
+	t-test p-value:  0.0005
+	t-test t-value:  3.8833
+	Threshold:  0.1 -  PASS
+	Threshold:  0.05 -  PASS
+	Threshold:  0.01 -  PASS
