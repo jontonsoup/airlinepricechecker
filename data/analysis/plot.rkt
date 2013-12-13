@@ -1,7 +1,9 @@
 #lang racket
 
 (require json
-         plot)
+         math/statistics
+         plot
+         unstable/list)
 
 (define (json-from-file f)
   (read-json (open-input-file f)))
@@ -83,9 +85,10 @@
   (sort l < #:key (λ (v) (vector-ref v 0))))
 #;(map vector (sort-on-fst tor-ps) (sort-on-fst ff-ps))
 
+
 (define (no-change? l)
   (>= 1 (set-count (list->set l))))
-
+#;#;
 (define plots
   (for/list ([(flight offers) (in-hash flight-map)])
     (displayln flight)
@@ -112,3 +115,62 @@
                  [else
                   (plot-flight-prices flight flight-map)])])))
 plots
+
+(define-values (tors ffs)
+               (partition-browser (set->list (apply set-union (hash-values flight-map)))))
+
+(define flight-tor-ips
+  (for/hash ([(flight offers) (in-hash flight-map)])
+    (define tor-ips
+      (list->set
+       (map (λ (ht) (hash-ref ht 'ip))
+            (filter (λ (ht) (string=? "Tor" (hash-ref ht 'browser)))
+                    (set->list offers)))))
+    (values flight tor-ips)))
+(define tor-ips
+  (apply set-union (hash-values flight-tor-ips)))
+
+(define ip-tor-flights
+  (for/hash ([ip (in-set tor-ips)])
+    (define flight-counts
+      (for/hash ([(flight ips) (in-hash flight-tor-ips)])
+        (define count 
+          (cond [(set-member? ips ip)
+                 (set-count (filter (λ (ht) (string=? ip (hash-ref ht 'ip)))
+                                    (set->list (hash-ref flight-map flight))))]
+                [else 0]))
+        (values flight count)))
+    (values ip flight-counts)))
+
+(define ip-flight-counts
+  (for/list ([(ip flight-counts) (in-hash ip-tor-flights)])
+    (cons ip (hash-values flight-counts))))
+(define grouped (group-by identity (map (compose (curry apply max) cdr) ip-flight-counts)))
+
+(define ip-flight-count-densities
+  (for/list ([l (in-list (sort grouped < #:key car))])
+    (vector (car l) (length l))))
+
+(plot-file (discrete-histogram ip-flight-count-densities)
+      "ip-flight-max-histogram.png"
+      'png
+      #:title "Max Number of times a Flight is Seen by Specific Tor Ip Address"
+      #:x-label "Max Number of times Flight is Seen"
+      #:y-label "Number of Tor Ip Addresses"
+      )
+
+(define interval-densities
+  (let ([id-map
+         (for/fold ([ht (hash)])
+           ([(flight ips) (in-hash flight-tor-ips)])
+           (define i (* 10 (floor (/ (set-count ips) 10))))
+           (define interval (ivl i (+ i 10)))
+           (hash-update ht interval add1 1))])
+    (for/list ([(i d) (in-hash id-map)])
+    (vector i d))))
+(plot (discrete-histogram interval-densities) 
+      ;;"flight-ip-histogram.png"
+      ;;'png
+      #:x-label "Number of Tor Ip Addresses"
+      #:y-label "Number of Flights seen by that Many Tor Ip Addresses"
+      #:title "Number of Different IPs Seeing Flight")
