@@ -106,10 +106,7 @@
            (vector 'no-time-change flight )]
           [else
            (define-values (tors ffs) (partition-browser off-list))
-           (cond [(or (no-change? (to-prices tors)))
-                  (or (no-change? (to-prices ffs)))
-                  (vector 'different-no-change flight)]
-                 [(or (no-change? (to-times tors))
+           (cond [(or (no-change? (to-times tors))
                       (no-change? (to-times ffs)))
                   (vector 'different-no-time-change flight)]
                  [else
